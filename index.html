@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garden Village | Aïn Chqef, Fès</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0A1A12', /* Deep dark green */
+                            light: '#1B3A2E',
+                            gold: '#C5A059',
+                            cream: '#F9F8F6',
+                            text: '#2C3E35'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        widest: '.25em',
+                        loose: '.1em'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+        body {
+            background-color: theme('colors.brand.cream');
+            color: theme('colors.brand.text');
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: theme('colors.brand.cream'); }
+        ::-webkit-scrollbar-thumb { background: theme('colors.brand.dark'); }
+
+        /* Elegant fade-in animations on scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-400 { transition-delay: 400ms; }
+
+        /* Image treatment for luxury feel */
+        .img-lux {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1.5s ease;
+        }
+        .img-container {
+            overflow: hidden;
+        }
+        .img-container:hover .img-lux {
+            transform: scale(1.03);
+        }
+
+        /* Chart constraints */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+            height: 300px;
+        }
+
+        /* Navbar transitions */
+        .nav-scrolled {
+            background-color: rgba(10, 26, 18, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .nav-top {
+            background-color: transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        /* AI Feature Styles */
+        .ai-glow {
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
+            transition: box-shadow 0.3s ease;
+        }
+        .ai-glow:focus-within {
+            box-shadow: 0 0 25px rgba(197, 160, 89, 0.5);
+        }
+        .typing-indicator span {
+            animation: blink 1.4s infinite both;
+            height: 6px;
+            width: 6px;
+            background: theme('colors.brand.gold');
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            20% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.2; transform: scale(0.8); }
+        }
+    </style>
+
+    <!-- Chosen Palette: Deep Emerald Green, Soft Gold, Warm Cream -->
+    <!-- Application Structure Plan: Full integration of content, images and Gemini AI features -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="font-sans selection:bg-brand-gold selection:text-brand-dark">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 nav-top">
+        <div class="max-w-screen-2xl mx-auto px-6 md:px-12 flex justify-between items-center">
+            <a href="#" class="text-brand-gold font-serif text-2xl tracking-widest uppercase">Garden Village</a>
+            
+            <div class="hidden lg:flex space-x-10 text-[11px] tracking-widest uppercase text-white/90 font-light">
+                <a href="#hebergement" class="hover:text-brand-gold transition-colors">L'Hébergement</a>
+                <a href="#gastronomie" class="hover:text-brand-gold transition-colors">La Gastronomie</a>
+                <a href="#loisirs" class="hover:text-brand-gold transition-colors">Les Loisirs</a>
+                <a href="#investissement" class="hover:text-brand-gold transition-colors">Investissement</a>
+            </div>
+
+            <a href="#contact" class="hidden md:block text-[10px] tracking-widest uppercase text-brand-dark bg-brand-gold px-6 py-3 hover:bg-white transition-colors duration-300">
+                Accès Investisseur
+            </a>
+            
+            <button class="lg:hidden text-brand-gold text-xs tracking-widest uppercase">Menu</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen flex flex-col justify-center items-center text-center overflow-hidden bg-brand-dark">
+        <!-- Hero Background Image (Local File) -->
+        <div class="absolute inset-0 bg-brand-dark">
+            <img src="villas-hd.png" alt="Garden Village Reception Night" class="w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/40 via-transparent to-brand-dark"></div>
+        </div>
+        
+        <div class="relative z-10 px-4 mt-20 reveal active">
+            <p class="text-brand-gold text-xs md:text-sm tracking-[0.4em] uppercase mb-6">Un Écrin Précieux à Aïn Chqef, Fès</p>
+            <h1 class="text-5xl md:text-8xl font-serif text-white font-light mb-8 tracking-wide">Garden Village</h1>
+            <div class="w-px h-20 bg-brand-gold mx-auto mb-8"></div>
+            <p class="text-lg md:text-xl text-white/80 font-light max-w-2xl mx-auto tracking-wide">
+                L'art de vivre réinventé. L'intimité absolue rencontre l'excellence des loisirs.
+            </p>
+        </div>
+
+        <a href="#vision" class="absolute bottom-12 left-1/2 transform -translate-x-1/2 text-brand-gold text-[10px] tracking-widest uppercase hover:text-white transition-colors flex flex-col items-center gap-3 reveal active delay-400">
+            <span>Découvrir le Domaine</span>
+            <span class="text-xl font-serif italic">&#8595;</span>
+        </a>
+    </header>
+
+    <!-- Intro & Metrics -->
+    <section id="vision" class="py-24 bg-brand-dark text-white border-b border-brand-gold/20">
+        <div class="max-w-screen-xl mx-auto px-6 reveal">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-brand-gold/20">
+                <div class="pt-6 md:pt-0">
+                    <p class="text-[10px] uppercase tracking-widest text-brand-gold mb-3">Superficie</p>
+                    <p class="text-4xl font-serif text-white">6 680 <span class="text-lg text-brand-gold/70 font-sans">m²</span></p>
+                </div>
+                <div class="pt-6 md:pt-0">
+                    <p class="text-[10px] uppercase tracking-widest text-brand-gold mb-3">Capacité</p>
+                    <p class="text-4xl font-serif text-white">20 <span class="text-lg text-brand-gold/70 font-sans">Villas Privées</span></p>
+                </div>
+                <div class="pt-6 md:pt-0">
+                    <p class="text-[10px] uppercase tracking-widest text-brand-gold mb-3">Marge Globale</p>
+                    <p class="text-4xl font-serif text-white">78<span class="text-lg text-brand-gold/70 font-sans">%</span></p>
+                </div>
+                <div class="pt-6 md:pt-0">
+                    <p class="text-[10px] uppercase tracking-widest text-brand-gold mb-3">ROI Estimé</p>
+                    <p class="text-4xl font-serif text-white">8 - 10 <span class="text-lg text-brand-gold/70 font-sans">Ans</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 1: L'Hébergement -->
+    <section id="hebergement" class="py-32 px-6 bg-brand-cream relative overflow-hidden">
+        <!-- Decorative background element -->
+        <div class="absolute top-0 right-0 w-1/3 h-full bg-white opacity-50 skew-x-12 transform origin-top hidden lg:block"></div>
+        
+        <div class="max-w-screen-xl mx-auto relative z-10">
+            <div class="text-center mb-24 reveal">
+                <p class="text-brand-gold text-[10px] tracking-widest uppercase mb-4">Le Sanctuaire</p>
+                <h2 class="text-4xl md:text-6xl font-serif text-brand-dark">L'Hébergement</h2>
+                <div class="w-12 h-px bg-brand-gold mx-auto mt-8"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                <!-- Text Block -->
+                <div class="lg:col-span-5 reveal">
+                    <h3 class="text-3xl font-serif text-brand-dark mb-6 leading-tight">L'Intimité Érigée<br>en Art de Vivre</h3>
+                    <p class="text-brand-light font-light leading-relaxed mb-8">
+                        Conçues avec une architecture mauresque subtilement modernisée, nos 20 villas de luxe redéfinissent le séjour à Fès. Chaque unité est une oasis privée, ceinte de hauts murs préservant une intimité absolue (100% sans vis-à-vis).
+                    </p>
+                    <ul class="space-y-6 text-sm">
+                        <li class="flex items-start border-b border-brand-dark/10 pb-4">
+                            <span class="text-brand-gold mr-4 text-lg mt-1">&#10022;</span>
+                            <div>
+                                <strong class="block text-brand-dark uppercase tracking-widest text-[10px] mb-1">Architecture & Végétation</strong>
+                                <span class="text-brand-light font-light">Des jardins luxuriants intégrant palmiers, bougainvilliers et flore locale pour une isolation visuelle naturelle et élégante.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start border-b border-brand-dark/10 pb-4">
+                            <span class="text-brand-gold mr-4 text-lg mt-1">&#10022;</span>
+                            <div>
+                                <strong class="block text-brand-dark uppercase tracking-widest text-[10px] mb-1">Stratégie Commerciale</strong>
+                                <span class="text-brand-light font-light">Un positionnement tarifaire "Premium" rendu possible par l'absence d'offre similaire répondant aux exigences des familles et des MRE.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Images Block (Local Files) -->
+                <div class="lg:col-span-7 grid grid-cols-2 gap-4 reveal delay-200">
+                    <div class="col-span-2 img-container aspect-video bg-gray-200">
+                        <img src="accueil.jpg" alt="Cheminement entre les villas" class="img-lux" onerror="this.style.display='none'">
+                    </div>
+                    <div class="img-container aspect-square bg-gray-200">
+                        <img src="livingroom.jpeg" alt="Extérieur des villas" class="img-lux" onerror="this.style.display='none'">
+                    </div>
+                    <div class="img-container aspect-square bg-gray-200">
+                        <img src="pool.jpeg" alt="Réception Jour" class="img-lux" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: La Gastronomie -->
+    <section id="gastronomie" class="py-32 px-6 bg-white border-t border-brand-gold/10">
+        <div class="max-w-screen-xl mx-auto">
+            <div class="text-center mb-24 reveal">
+                <p class="text-brand-gold text-[10px] tracking-widest uppercase mb-4">L'Épicentre des Saveurs</p>
+                <h2 class="text-4xl md:text-6xl font-serif text-brand-dark">La Gastronomie</h2>
+                <div class="w-12 h-px bg-brand-gold mx-auto mt-8"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <!-- Large Image (Local File) -->
+                <div class="order-2 lg:order-1 img-container aspect-[4/5] reveal bg-gray-200">
+                    <img src="resto.jpg" alt="Food Court Extérieur Nuit" class="img-lux" onerror="this.style.display='none'">
+                </div>
+                
+                <!-- Content & Menu -->
+                <div class="order-1 lg:order-2 reveal delay-200">
+                    <h3 class="text-3xl font-serif text-brand-dark mb-6">Un Food Court Vibrant & Authentique</h3>
+                    <p class="text-brand-light font-light leading-relaxed mb-10">
+                        La place centrale du Garden Village s'anime autour d'une offre culinaire stratégique. En s'appuyant sur l'Agropolis de Fès pour un sourcing local, nous avons élaboré une carte "80/20" : une sélection pointue maximisant à la fois la satisfaction client et la rentabilité.
+                    </p>
+                    
+                    <!-- Menu Box -->
+                    <div class="bg-brand-cream p-8 border border-brand-gold/30 relative">
+                        <!-- Corner Accents -->
+                        <div class="absolute top-0 left-0 w-3 h-3 border-t border-l border-brand-gold"></div>
+                        <div class="absolute top-0 right-0 w-3 h-3 border-t border-r border-brand-gold"></div>
+                        <div class="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-brand-gold"></div>
+                        <div class="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-brand-gold"></div>
+                        
+                        <h4 class="text-center font-serif text-brand-dark text-xl mb-8 uppercase tracking-widest">La Carte Stratégique</h4>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between items-baseline mb-1 border-b border-dotted border-brand-light/30 pb-1">
+                                    <span class="font-serif text-brand-dark text-lg">Fast-Food Gourmet</span>
+                                    <span class="text-brand-gold text-[10px] tracking-widest uppercase">Rotation Rapide</span>
+                                </div>
+                                <p class="text-brand-light font-light text-xs">Smash Burger Fassi, viandes premium locales.</p>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-baseline mb-1 border-b border-dotted border-brand-light/30 pb-1">
+                                    <span class="font-serif text-brand-dark text-lg">Le Grill Familial</span>
+                                    <span class="text-brand-gold text-[10px] tracking-widest uppercase">Ticket Élevé</span>
+                                </div>
+                                <p class="text-brand-light font-light text-xs">Plateaux de viandes mixtes à partager, favorisant la convivialité.</p>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-baseline mb-1 border-b border-dotted border-brand-light/30 pb-1">
+                                    <span class="font-serif text-brand-dark text-lg">L'Atelier Italien</span>
+                                    <span class="text-brand-gold text-[10px] tracking-widest uppercase">Marge Maximale</span>
+                                </div>
+                                <p class="text-brand-light font-light text-xs">Pizzas artisanales au feu de bois. Coûts de revient optimisés.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Gastronomy Feature -->
+            <div class="mt-20 max-w-4xl mx-auto bg-white p-8 border border-brand-gold/30 ai-glow reveal delay-400 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-brand-gold text-brand-dark text-[9px] uppercase tracking-widest px-3 py-1 font-bold">Innovation IA ✨</div>
+                <h4 class="font-serif text-brand-dark text-2xl mb-4 text-center">Testez notre Menu Adaptatif</h4>
+                <p class="text-brand-light font-light text-sm text-center mb-6">
+                    Proposez un ingrédient local marocain. Notre Chef IA concevra un plat signature luxueux respectant notre objectif de marge brute (>75%).
+                </p>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input type="text" id="ingredientInput" placeholder="Ex: Safran de Taliouine, Citron confit..." class="flex-1 bg-brand-cream border border-brand-gold/30 px-4 py-3 focus:outline-none focus:border-brand-gold text-brand-dark font-light">
+                    <button onclick="generateRecipe()" class="bg-brand-dark text-brand-gold px-8 py-3 text-xs tracking-widest uppercase hover:bg-brand-light transition-colors">
+                        Créer le Plat
+                    </button>
+                </div>
+                <div id="recipeOutput" class="mt-6 hidden bg-brand-cream p-6 border-l-2 border-brand-gold">
+                    <!-- Content injected by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: Les Loisirs -->
+    <section id="loisirs" class="py-32 px-6 bg-brand-cream border-t border-brand-gold/10">
+        <div class="max-w-screen-xl mx-auto">
+            <div class="text-center mb-24 reveal">
+                <p class="text-brand-gold text-[10px] tracking-widest uppercase mb-4">L'Émerveillement</p>
+                <h2 class="text-4xl md:text-6xl font-serif text-brand-dark">Les Loisirs</h2>
+                <div class="w-12 h-px bg-brand-gold mx-auto mt-8"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                <!-- Content Block -->
+                <div class="lg:col-span-5 lg:order-1 order-2 reveal">
+                    <h3 class="text-3xl font-serif text-brand-dark mb-6 leading-tight">La Magie de<br>l'Enfance</h3>
+                    <p class="text-brand-light font-light leading-relaxed mb-8">
+                        L'offre de loisirs complète l'expérience Garden Village en faisant de ce lieu une destination incontournable pour les familles. Une zone dédiée, vibrante de couleurs et d'activités, attire et retient la clientèle tout au long de la journée.
+                    </p>
+                    
+                    <div class="space-y-8">
+                        <div class="flex gap-4">
+                            <div class="text-brand-gold text-2xl font-serif italic">01.</div>
+                            <div>
+                                <h4 class="font-serif text-brand-dark text-xl mb-2">Parc Indoor Technologique</h4>
+                                <p class="text-brand-light font-light text-sm">Murs interactifs en Réalité Augmentée (AR) et structures Soft Play. Une optimisation spatiale garantissant une gestion autonome et des coûts de personnel minimes.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="text-brand-gold text-2xl font-serif italic">02.</div>
+                            <div>
+                                <h4 class="font-serif text-brand-dark text-xl mb-2">Snacking & Gourmandises</h4>
+                                <p class="text-brand-light font-light text-sm">Carioles à barbe à papa, bar à jus et crêpes. Des points de vente à marge très élevée (>80%) captant l'attention lors des moments de jeu.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Block (Local File) -->
+                <div class="lg:col-span-7 lg:order-2 order-1 img-container aspect-video shadow-2xl reveal delay-200 bg-gray-200">
+                    <img src="Garden-park.jpg" alt="Espace Loisirs et Barbe à Papa" class="img-lux" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: Investissement & Data -->
+    <section id="investissement" class="py-32 px-6 bg-brand-dark text-white border-t border-brand-gold/30">
+        <div class="max-w-screen-xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-white/10 pb-10 reveal">
+                <div class="max-w-2xl">
+                    <p class="text-brand-gold text-[10px] tracking-widest uppercase mb-4">Analyse Quantitative</p>
+                    <h2 class="text-4xl md:text-5xl font-serif text-white mb-6">Indicateurs de Performance</h2>
+                    <p class="text-white/70 font-light leading-relaxed">
+                        Garden Village offre une structure de coûts hautement optimisée. La synergie entre l'hébergement de luxe et le pôle loisirs/gastronomie lisse la saisonnalité et génère un EBITDA projeté de 5 MDH annuels.
+                    </p>
+                </div>
+                <div class="mt-10 md:mt-0 text-left md:text-right">
+                    <p class="text-[10px] uppercase tracking-widest text-brand-gold mb-2">Avantage Nouvelle Charte</p>
+                    <p class="text-3xl font-serif text-white">Primes jusqu'à <span class="text-brand-gold">30%</span></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 reveal delay-200">
+                <!-- Revenue Mix Chart -->
+                <div class="bg-white/5 p-10 border border-white/5">
+                    <h3 class="text-center font-serif text-xl text-white mb-2">Mix de Revenus Projeté</h3>
+                    <p class="text-center text-[10px] tracking-widest text-brand-gold uppercase mb-10">Diversification des sources</p>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Margins Chart -->
+                <div class="bg-white/5 p-10 border border-white/5">
+                    <h3 class="text-center font-serif text-xl text-white mb-2">Rentabilité par Pôle</h3>
+                    <p class="text-center text-[10px] tracking-widest text-brand-gold uppercase mb-10">Marge Brute (%)</p>
+                    <div class="chart-container">
+                        <canvas id="marginChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Investment Advisor Feature -->
+            <div class="mt-20 max-w-screen-xl mx-auto bg-[#0a1510] border border-brand-gold/20 p-8 reveal relative ai-glow">
+                <div class="absolute top-0 left-0 bg-brand-gold text-brand-dark text-[9px] uppercase tracking-widest px-3 py-1 font-bold">Conseiller Stratégique IA ✨</div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <div class="lg:col-span-1">
+                        <h4 class="font-serif text-white text-2xl mb-4 mt-4">Posez vos Questions</h4>
+                        <p class="text-white/60 font-light text-sm mb-6">
+                            Notre assistant IA est formé sur les données macro-économiques de Fès, la charte de l'investissement marocaine, et les spécificités du projet Garden Village.
+                        </p>
+                        <div class="space-y-2">
+                            <button onclick="askPreset('Quel est l\'impact de la Coupe du Monde 2030 sur ce projet ?')" class="block w-full text-left text-xs text-brand-gold border border-brand-gold/30 p-3 hover:bg-brand-gold/10 transition">
+                                Impact Coupe du Monde 2030 ?
+                            </button>
+                            <button onclick="askPreset('Comment la marge de 90% sur les loisirs est-elle justifiée ?')" class="block w-full text-left text-xs text-brand-gold border border-brand-gold/30 p-3 hover:bg-brand-gold/10 transition">
+                                Explication marge loisirs (90%) ?
+                            </button>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 flex flex-col">
+                        <div id="chatHistory" class="flex-1 min-h-[200px] max-h-[300px] overflow-y-auto mb-4 space-y-4 pr-2">
+                            <div class="bg-white/5 p-4 border border-white/10 rounded-tr-xl rounded-br-xl rounded-bl-xl text-white/80 font-light text-sm">
+                                Bonjour. Je suis votre conseiller virtuel pour le projet Garden Village. Comment puis-je vous éclairer sur cette opportunité d'investissement ?
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="investorQuestion" placeholder="Votre question financière ou stratégique..." class="flex-1 bg-white/5 border border-brand-gold/30 px-4 py-3 focus:outline-none focus:border-brand-gold text-white font-light text-sm" onkeypress="if(event.key === 'Enter') askAdvisor()">
+                            <button onclick="askAdvisor()" class="bg-brand-gold text-brand-dark px-6 py-3 text-xs tracking-widest uppercase hover:bg-white transition-colors">
+                                Demander
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact -->
+    <footer id="contact" class="bg-[#050d09] py-32 px-6 text-center relative overflow-hidden">
+        <div class="max-w-2xl mx-auto relative z-10 reveal">
+            <h2 class="text-brand-gold text-[10px] tracking-widest uppercase mb-6">Confidentialité & Exclusivité</h2>
+            <h3 class="text-4xl md:text-5xl font-serif text-white mb-10">Rejoignez l'Aventure</h3>
+            <p class="text-white/60 font-light mb-12 text-sm md:text-base leading-relaxed">
+                Le mémorandum d'information complet, les plans architecturaux détaillés et le modèle financier sous-jacent sont disponibles sur requête pour les investisseurs qualifiés.
+            </p>
+            <button class="bg-transparent border border-brand-gold text-brand-gold text-[10px] tracking-widest uppercase py-5 px-12 hover:bg-brand-gold hover:text-brand-dark transition-all duration-500">
+                Demander le Business Plan
+            </button>
+            <div class="mt-20 w-px h-16 bg-white/10 mx-auto"></div>
+            <p class="mt-10 text-[9px] text-white/30 tracking-widest uppercase">
+                &copy; 2026 Garden Village Invest. Fès, Maroc.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- Navbar Scroll Effect ---
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('nav-scrolled');
+                    navbar.classList.remove('nav-top');
+                } else {
+                    navbar.classList.add('nav-top');
+                    navbar.classList.remove('nav-scrolled');
+                }
+            });
+
+            // --- Scroll Reveal Animation ---
+            function reveal() {
+                var reveals = document.querySelectorAll(".reveal");
+                for (var i = 0; i < reveals.length; i++) {
+                    var windowHeight = window.innerHeight;
+                    var elementTop = reveals[i].getBoundingClientRect().top;
+                    var elementVisible = 100;
+                    if (elementTop < windowHeight - elementVisible) {
+                        reveals[i].classList.add("active");
+                    }
+                }
+            }
+            window.addEventListener("scroll", reveal);
+            reveal(); // Trigger on load
+
+            // --- Chart.js Configuration ---
+            Chart.defaults.color = 'rgba(255, 255, 255, 0.6)';
+            Chart.defaults.font.family = '"Lato", sans-serif';
+            
+            // 1. Revenue Doughnut
+            const ctxRev = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctxRev, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hébergement', 'Gastronomie', 'Loisirs'],
+                    datasets: [{
+                        data: [40, 35, 25],
+                        backgroundColor: ['#C5A059', '#F9F8F6', '#1B3A2E'],
+                        borderWidth: 2,
+                        borderColor: '#0A1A12',
+                        hoverOffset: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { usePointStyle: true, padding: 25, font: { size: 11, family: '"Lato", sans-serif' } } 
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(10, 26, 18, 0.9)',
+                            titleFont: { family: '"Playfair Display", serif', size: 14 },
+                            padding: 15,
+                            borderColor: '#C5A059',
+                            borderWidth: 1,
+                            callbacks: { label: (context) => ' ' + context.label + ' : ' + context.raw + '%' }
+                        }
+                    }
+                }
+            });
+
+            // 2. Margins Bar
+            const ctxMargin = document.getElementById('marginChart').getContext('2d');
+            new Chart(ctxMargin, {
+                type: 'bar',
+                data: {
+                    labels: ['Hébergement', 'Gastronomie', 'Loisirs'],
+                    datasets: [{
+                        label: 'Marge Brute (%)',
+                        data: [85, 70, 90],
+                        backgroundColor: 'rgba(197, 160, 89, 0.15)',
+                        borderColor: '#C5A059',
+                        borderWidth: 1,
+                        barThickness: 30,
+                        hoverBackgroundColor: 'rgba(197, 160, 89, 0.4)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(10, 26, 18, 0.9)',
+                            titleFont: { family: '"Playfair Display", serif', size: 14 },
+                            padding: 15,
+                            borderColor: '#C5A059',
+                            borderWidth: 1,
+                            callbacks: { label: (context) => ' Marge : ' + context.raw + '%' }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { callback: (value) => value + '%', font: {size: 10} }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { font: { family: '"Playfair Display", serif', size: 13 } }
+                        }
+                    }
+                }
+            });
+        });
+
+        // --- GEMINI API INTEGRATION ---
+        
+        // Helper function to call Gemini API with exponential backoff
+        async function fetchGemini(prompt, systemInstruction) {
+            const apiKey = ""; // Provided by execution environment
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] }
+            };
+
+            let retries = 5;
+            let delay = 1000;
+            
+            while (retries > 0) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || "Réponse indisponible.";
+                } catch (error) {
+                    retries--;
+                    if (retries === 0) return "Une erreur de communication avec l'assistant est survenue. Veuillez réessayer.";
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        // 1. Gastronomy Feature: Recipe Generator
+        async function generateRecipe() {
+            const input = document.getElementById('ingredientInput');
+            const output = document.getElementById('recipeOutput');
+            const ingredient = input.value.trim();
+            
+            if (!ingredient) return;
+
+            // UI Loading state
+            output.classList.remove('hidden');
+            output.innerHTML = `<div class="typing-indicator flex items-center h-6"><span class="mr-1">Création en cours</span> <span></span><span></span><span></span></div>`;
+
+            const systemInstruction = `Tu es le Chef exécutif et directeur financier du Garden Village à Fès (un resort de luxe). Ta mission est de créer un plat signature à partir de l'ingrédient donné. 
+            Contraintes:
+            1. Donne un nom très élégant et luxueux au plat.
+            2. Décris le plat de façon appétissante (maximum 2 phrases).
+            3. Explique en 1 courte phrase pourquoi ce plat est extrêmement rentable (marge > 75%) en suivant la stratégie 80/20 (ex: coût matière faible, préparation rapide).
+            Formatte la réponse en HTML simple: un <h4> pour le nom du plat, un <p> pour la description, et un <p class="text-brand-gold mt-2 text-xs uppercase tracking-widest"> pour l'explication de la rentabilité.`;
+
+            const responseText = await fetchGemini(`Ingrédient proposé : ${ingredient}`, systemInstruction);
+            
+            // Display result
+            output.innerHTML = responseText;
+            input.value = '';
+        }
+
+        // 2. Investment Feature: AI Advisor
+        function askPreset(question) {
+            document.getElementById('investorQuestion').value = question;
+            askAdvisor();
+        }
+
+        async function askAdvisor() {
+            const input = document.getElementById('investorQuestion');
+            const chatHistory = document.getElementById('chatHistory');
+            const question = input.value.trim();
+            
+            if (!question) return;
+
+            // Add user question to chat
+            chatHistory.innerHTML += `
+                <div class="flex justify-end mt-4">
+                    <div class="bg-brand-gold/10 p-4 border border-brand-gold/30 rounded-tl-xl rounded-bl-xl rounded-tr-xl text-brand-gold font-light text-sm max-w-[80%]">
+                        ${question}
+                    </div>
+                </div>
+            `;
+            input.value = '';
+            
+            // Scroll to bottom
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Add typing indicator
+            const typingId = 'typing-' + Date.now();
+            chatHistory.innerHTML += `
+                <div id="${typingId}" class="mt-4 bg-white/5 p-4 border border-white/10 rounded-tr-xl rounded-br-xl rounded-bl-xl text-white/50 w-fit">
+                    <div class="typing-indicator"><span></span><span></span><span></span></div>
+                </div>
+            `;
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            const systemInstruction = `Tu es le conseiller financier IA officiel du projet 'Garden Village' à Fès (Maroc). 
+            Contexte du projet: Complexe de 6680m², 22 MDH de CAPEX, ROI de 8-10 ans, marge globale de 78%. 3 Pôles: Hébergement (20 villas sans vis-à-vis, marge 85%), Gastronomie (Food court sourcing local, marge 70%), Loisirs (Jeux AR technologiques, marge 90%). 
+            Le marché: Fès est en pleine croissance, portée par l'impact de la Coupe du Monde 2030 et la Nouvelle Charte de l'Investissement (jusqu'à 30% de prime).
+            Ton ton: Professionnel, haut de gamme, rassurant, analytique et concis. Ne fais pas de longues listes. Réponds toujours brièvement (3-4 phrases max) en mettant en valeur la solidité et la rentabilité du projet.`;
+
+            const responseText = await fetchGemini(`Question de l'investisseur : ${question}`, systemInstruction);
+            
+            // Remove typing indicator and add response
+            document.getElementById(typingId).remove();
+            
+            // Convert simple markdown-like bold to HTML for better display if LLM uses it
+            const formattedResponse = responseText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            chatHistory.innerHTML += `
+                <div class="mt-4 bg-white/5 p-4 border border-white/10 rounded-tr-xl rounded-br-xl rounded-bl-xl text-white/80 font-light text-sm max-w-[90%] leading-relaxed">
+                    ${formattedResponse}
+                </div>
+            `;
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+    </script>
+</body>
+</html>
